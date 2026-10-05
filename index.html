@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="sr-Latn"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DiamondPlus – pregled troškova jul–septembar 2026.</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--tx:#0f172a;--mu:#64748b;--bd:#e2e8f0;--ac:#0ea5a4;--hv:#eef6f7;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1220;--card:#131c2e;--tx:#e8eef8;--mu:#93a3b8;--bd:#233049;--hv:#182640}}
+:root[data-theme="dark"]{--bg:#0b1220;--card:#131c2e;--tx:#e8eef8;--mu:#93a3b8;--bd:#233049;--hv:#182640}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.w{max-width:1100px;margin:0 auto;padding:20px 16px 40px}
+.hd{background:linear-gradient(135deg,#0b3b4a,#0ea5a4 70%,#6366f1);color:#fff;border-radius:18px;padding:22px 24px;margin-bottom:16px}
+.hd h1{margin:0 0 4px;font-size:clamp(20px,4vw,28px)}.hd p{margin:0;opacity:.85;font-size:14px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.bar input{flex:1;min-width:180px;padding:9px 12px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx);font:inherit}
+.seg button,.rs{border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:8px 14px;font:inherit;cursor:pointer}
+.seg{display:flex}.seg button:first-child{border-radius:10px 0 0 10px}.seg button:last-child{border-radius:0 10px 10px 0}.seg button+button{border-left:0}
+.seg button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.rs{border-radius:10px;color:var(--mu)}
+#k{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px 16px}
+.lb{font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.04em}.v{font-size:22px;font-weight:700;margin-top:2px}.sb{font-size:12px;color:var(--mu);min-height:18px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+@media(max-width:760px){.g{grid-template-columns:1fr}}
+h2{font-size:15px;margin:0 0 10px}
+.cw{position:relative;height:250px}
+.ct{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;text-align:center}
+.ct b{font-size:20px}.ct span{font-size:12px;color:var(--mu)}
+#cats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.chip{display:flex;align-items:center;gap:7px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.chip i,.dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}.chip i{margin:0}
+.chip small{color:var(--mu)}.chip.on{border-color:var(--ac);box-shadow:0 0 0 2px var(--ac) inset}
+.tw{overflow-x:auto;max-height:440px;overflow-y:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:640px}
+th{position:sticky;top:0;background:var(--card);text-align:left;cursor:pointer;color:var(--mu);font-weight:600;padding:8px;border-bottom:2px solid var(--bd);white-space:nowrap}
+td{padding:7px 8px;border-bottom:1px solid var(--bd)}tr:hover td{background:var(--hv)}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bd{background:#f59e0b22;color:#d97706;border:1px solid #f59e0b66;border-radius:6px;padding:0 6px;font-size:11px;white-space:nowrap}
+.ft{color:var(--mu);font-size:12px;margin-top:14px}
+</style></head><body><div class="w">
+<div class="hd"><h1>💎 DiamondPlus – troškovi, jul–septembar 2026.</h1><p>Klikom na mesec, kategoriju ili deo grafikona prikaz se filtrira</p></div>
+<div class="bar"><div class="seg" id="mo"></div><input id="q" placeholder="Pretraga: opis, dobavljač, broj računa…"><button class="rs" id="rs">Poništi filtere</button></div>
+<div id="cats"></div>
+<div id="k"></div>
+<div class="g">
+<div class="card"><h2>Udeo kategorija</h2><div class="cw"><canvas id="c1"></canvas><div class="ct"><b id="ctv"></b><span>RSD u prikazu</span></div></div></div>
+<div class="card"><h2>Troškovi po mesecima</h2><div class="cw"><canvas id="c2"></canvas></div></div>
+</div>
+<div class="card"><h2>Sve stavke <span style="font-weight:400;color:var(--mu)" id="cnt"></span></h2>
+<div class="tw"><table><thead><tr id="th"></tr></thead><tbody id="tb"></tbody></table></div></div>
+<p class="ft">Podaci korišćeni u projektu su simulirani i kreirani isključivo za potrebe portfolija. Izvor: DiamondPlus_troskovi_analiza.xlsx, list „Troškovi“ (100 stavki, ukupno 849.190 RSD – isto kao u Excel tabeli).</p>
+</div>
+<script>
+const D={"c":["Oprema","Komunalije","Putni troškovi","Kancelarijski materijal","Sredstva za čišćenje","Tehnički materijal"],"t":["Baterije i punjači za alat","Dezinfekciono sredstvo za sanitarije","Gorivo za službeno vozilo","Gradski prevoz – mesečna karta tehničara","Hemijske olovke i markeri","Industrijski usisivač","Internet i fiksna telefonija","Kese za smeće, role","Laptop za administraciju","Merdevine aluminijumske","Mikrofiber krpe (pakovanje)","Mobilni telefoni zaposlenih (paketi)","Multimetar","Obrasci i blokovi za zapisnike","Odvoz smeća i komunalne usluge","Papir A4, 5 gramaža (riza)","Parking tokom intervencije kod klijenta","Putarina – službeni put","Radne uniforme i zaštitna obuća (komplet)","Račun za električnu energiju – poslovni prostor","Račun za vodu i kanalizaciju","Registratori i fascikle","Rezervni delovi za vodokotlić","Rukavice za jednokratnu upotrebu","Sijalice LED i grla","Silikon, lepak, trake","Slavine, creva i zaptivke","Spajalice, heftalice, perforatori","Sredstvo za podove, 5 l","Sredstvo za staklo i ogledala","Taksi do objekta klijenta","Tečni sapun, rezerve","Toalet papir i papirni ubrusi (veća količina)","Toner za štampač","Vizit karte novih zaposlenih"],"s":["Benzinska pumpa","Elektro-alat Zemun","Gradski prevoznik","Građevinski market Zora","Higijena Pro","Komunalno preduzeće (voda)","Komunalno preduzeće (čistoća)","Mobilni operater","OfficeDom","Pakovanja Beograd","Papirnica Moravac","Parking servis","Putarina","Radna odeća Vesna","Računari Dunav","Snabdevač električnom energijom","Taksi prevoz","Tehnomarket Plus","Telekomunikacioni operater","Vodoinstalater Centar","Štamparija Sunce"],"p":["Gotovina","Kartica","Virman"],"r":[["2026-07-01",null,2,30,16,2564,0,1],["2026-07-03","FR-941226",2,2,0,7089,1,0],["2026-07-06","EPS-07/2026-33314",1,19,15,40599,2,0],["2026-07-06","FR-472099",3,4,8,682,1,0],["2026-07-06","FR-563023",4,1,4,3881,1,0],["2026-07-07","FR-656834",4,1,4,3674,1,0],["2026-07-07","FR-292351",5,25,3,3447,1,0],["2026-07-08","FR-304667",4,29,4,1767,2,0],["2026-07-08","FR-663974",5,22,19,2419,1,0],["2026-07-08","VK-07-6967",1,20,5,5900,2,0],["2026-07-09","FR-928013",4,23,9,3686,2,0],["2026-07-10","FR-611154",3,21,10,1921,1,0],["2026-07-10","FR-566276",4,7,9,2174,1,0],["2026-07-13","MO-07/26/975156",1,11,7,14377,2,0],["2026-07-13","FR-275202",2,2,0,11952,1,0],["2026-07-14","FR-339786",5,26,19,11424,1,0],["2026-07-15","FR-518857",3,4,8,2099,1,0],["2026-07-15","TO-07/26/244192",1,6,18,7990,2,0],["2026-07-15","FR-370272",3,27,8,749,1,0],["2026-07-17","FR-502412",3,21,10,3509,1,0],["2026-07-20","KP-07-83066",1,14,6,4380,2,0],["2026-07-20","FR-958247",4,1,4,2019,1,0],["2026-07-20","FR-736494",2,2,0,9834,1,0],["2026-07-20",null,2,16,11,286,0,1],["2026-07-21","FA-869/26",0,5,17,63311,2,0],["2026-07-22","FR-599594",2,3,2,4314,1,0],["2026-07-22","FR-783364",5,24,1,4624,2,0],["2026-07-23","FR-703448",5,26,19,3457,0,0],["2026-07-23","FR-467510",2,2,0,9404,1,0],["2026-07-24","FR-531097",3,4,8,1700,1,0],["2026-07-24","FR-309676",4,1,4,3880,2,0],["2026-07-27","FR-173347",2,2,0,9069,1,0],["2026-07-28","FR-289853",2,2,0,11253,1,0],["2026-07-28","FR-326661",3,34,20,3168,2,0],["2026-08-04","FR-446758",5,24,1,5074,0,0],["2026-08-04","FR-253633",4,28,4,2431,2,0],["2026-08-05","FR-155936",3,21,10,4340,0,0],["2026-08-05","VK-08-3185",1,20,5,6570,2,0],["2026-08-05","FR-925701",5,24,1,5137,2,0],["2026-08-05","FR-808033",4,32,9,14426,2,0],["2026-08-07","EPS-08/2026-78383",1,19,15,40671,2,0],["2026-08-07","FR-356102",2,2,0,8407,1,0],["2026-08-11","FA-440/26",0,8,14,116160,2,0],["2026-08-11","FR-773470",3,27,8,1944,1,0],["2026-08-11","FR-923674",4,28,4,2894,1,0],["2026-08-12","FR-434313",3,13,20,6630,1,0],["2026-08-12","FR-296360",4,1,4,4220,1,0],["2026-08-12","TO-08/26/252086",1,6,18,7990,2,0],["2026-08-13",null,2,16,11,515,0,1],["2026-08-13","MO-08/26/646972",1,11,7,15032,2,0],["2026-08-13","FR-979018",2,2,0,7666,1,0],["2026-08-13","FR-693764",2,2,0,9659,1,0],["2026-08-13","FR-868766",2,2,0,11000,1,0],["2026-08-13","FR-741716",2,2,0,8087,1,0],["2026-08-13","FR-975117",4,1,4,2434,1,0],["2026-08-17","FR-433776",5,26,19,9758,2,0],["2026-08-17","FR-216392",2,3,2,3862,1,0],["2026-08-17","FR-234467",4,23,9,3101,2,0],["2026-08-17","FR-764691",5,24,1,3335,2,0],["2026-08-18","KP-08-76509",1,14,6,4380,2,0],["2026-08-18","FR-330446",3,33,8,11997,1,0],["2026-08-18","FR-328668",3,34,20,3355,1,0],["2026-08-20","FR-499946",2,2,0,6862,1,0],["2026-08-20","FR-189298",3,15,10,2432,2,0],["2026-08-21","FR-313972",5,0,1,2384,2,0],["2026-08-24","FR-788594",3,21,10,2783,1,0],["2026-08-27","FR-667588",0,12,1,15322,1,0],["2026-08-28",null,2,16,11,684,0,1],["2026-08-28","FR-218139",4,1,4,3220,2,0],["2026-09-01","FR-859069",3,33,8,8750,1,0],["2026-09-02",null,2,16,11,1149,0,1],["2026-09-02","FR-961221",4,31,4,5135,1,0],["2026-09-02","FR-223219",5,0,1,5330,0,0],["2026-09-03",null,2,30,16,783,0,1],["2026-09-03","FR-494481",2,2,0,7147,1,0],["2026-09-04","FR-207164",4,29,4,1124,2,0],["2026-09-07","VK-09-5660",1,20,5,7731,2,0],["2026-09-07","FR-854481",2,2,0,7433,1,0],["2026-09-09","EPS-09/2026-86279",1,19,15,48351,2,0],["2026-09-09",null,2,30,16,1734,0,1],["2026-09-10","FR-603523",3,13,20,4376,2,0],["2026-09-10","FR-608946",2,17,12,1280,1,0],["2026-09-10","FR-606678",4,28,4,2112,1,0],["2026-09-15","TO-09/26/409939",1,6,18,7990,2,0],["2026-09-15","MO-09/26/977164",1,11,7,15288,2,0],["2026-09-15","KP-09-27435",1,14,6,4380,2,0],["2026-09-15","FR-223138",0,9,1,14825,1,0],["2026-09-16","FR-114523",4,10,4,4584,1,0],["2026-09-16","FR-595507",3,27,8,1308,0,0],["2026-09-17","FR-640136",3,34,20,4588,1,0],["2026-09-18","FR-771025",4,28,4,3187,2,0],["2026-09-21","FR-631368",3,33,8,12963,1,0],["2026-09-21","FR-840892",2,2,0,9735,1,0],["2026-09-21","FR-508130",4,10,4,1982,1,0],["2026-09-21","FR-475821",5,26,19,10002,2,0],["2026-09-22","FR-183969",5,22,19,2399,1,0],["2026-09-25","FR-921195",3,4,8,917,2,0],["2026-09-25",null,2,16,11,549,0,1],["2026-09-25","FA-191/26",0,18,13,33138,2,0],["2026-09-25","FR-428635",5,25,3,1556,1,0]]};
+const C=D.c,COL=['#0ea5a4','#6366f1','#f59e0b','#ec4899','#22c55e','#3b82f6'],MN=['Jul','Avgust','Septembar'];
+const R=D.r.map(x=>({d:x[0],n:x[1],c:x[2],t:D.t[x[3]],s:D.s[x[4]],a:x[5],p:D.p[x[6]],f:x[7],m:+x[0].slice(5,7)-7}));
+const $=i=>document.getElementById(i),fmt=n=>Math.round(n).toLocaleString('de-DE'),dm=d=>d.slice(8)+'.'+d.slice(5,7)+'.'+d.slice(0,4);
+const sum=a=>a.reduce((s,r)=>s+r.a,0);
+const S={m:-1,c:new Set(),q:'',k:'d',dir:1};
+const H=[['d','Datum'],['c','Kategorija'],['t','Opis'],['s','Dobavljač'],['p','Plaćanje'],['a','Iznos (RSD)']];
+let ch1,ch2;
+function build(){
+ const cs=getComputedStyle(document.documentElement);
+ Chart.defaults.color=cs.getPropertyValue('--mu').trim();Chart.defaults.borderColor=cs.getPropertyValue('--bd').trim();
+ Chart.defaults.font.family='system-ui,sans-serif';
+ ch1&&ch1.destroy();ch2&&ch2.destroy();
+ ch1=new Chart($('c1'),{type:'doughnut',data:{labels:C,datasets:[{data:[],backgroundColor:COL,borderWidth:0}]},
+  options:{maintainAspectRatio:false,cutout:'66%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fmt(c.raw)+' RSD'}}},
+  onClick:(e,el)=>{if(el.length)tg(el[0].index)}}});
+ ch2=new Chart($('c2'),{type:'bar',data:{labels:MN,datasets:[]},
+  options:{maintainAspectRatio:false,scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,ticks:{callback:v=>fmt(v/1000)+' k'}}},
+  plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.dataset.label+': '+fmt(c.raw)+' RSD'}}},
+  onClick:(e,el)=>{if(el.length){const j=el[0].index;S.m=S.m==j?-1:j;render()}}}});
+ render();
+}
+function tg(i){S.c.has(i)?S.c.delete(i):S.c.add(i);render()}
+function render(){
+ const q=S.q.toLowerCase();
+ const A=R.filter(r=>!q||(r.t+' '+r.s+' '+(r.n||'')).toLowerCase().includes(q));
+ const Fm=A.filter(r=>S.m<0||r.m==S.m),F=Fm.filter(r=>!S.c.size||S.c.has(r.c));
+ const tot=sum(F),big=F.reduce((b,r)=>!b||r.a>b.a?r:b,null);
+ $('mo').innerHTML=['Sve',...MN].map((n,i)=>`<button data-m="${i-1}" class="${S.m==i-1?'on':''}">${n}</button>`).join('');
+ $('k').innerHTML=[['Ukupno',fmt(tot)+' RSD',F.length?'u izabranom prikazu':''],['Broj stavki',F.length,''],['Prosečna stavka',F.length?fmt(tot/F.length)+' RSD':'–',''],['Najveća stavka',big?fmt(big.a)+' RSD':'–',big?big.t:''],['Bez broja računa',F.filter(r=>r.f).length,'za proveru']]
+  .map(([a,b,c])=>`<div class="card"><div class="lb">${a}</div><div class="v">${b}</div><div class="sb">${c}</div></div>`).join('');
+ const cs=C.map((_,i)=>sum(Fm.filter(r=>r.c==i))),ct=cs.reduce((a,b)=>a+b,0);
+ $('cats').innerHTML=C.map((n,i)=>`<button class="chip ${S.c.has(i)?'on':''}" data-c="${i}"><i style="background:${COL[i]}"></i>${n} <b>${fmt(cs[i])}</b> <small>${ct?(cs[i]/ct*100).toFixed(1).replace('.',','):'0'}%</small></button>`).join('');
+ ch1.data.datasets[0].data=cs;ch1.data.datasets[0].backgroundColor=COL.map((c,i)=>S.c.size&&!S.c.has(i)?c+'44':c);ch1.update();
+ $('ctv').textContent=fmt(ct);
+ const ms=[0,1,2].map(j=>A.filter(r=>r.m==j&&(!S.c.size||S.c.has(r.c))));
+ ch2.data.datasets=C.map((n,i)=>({label:n,data:[0,1,2].map(j=>sum(ms[j].filter(r=>r.c==i))),backgroundColor:COL[i]+(S.m<0?'':'ff'),
+  ...(S.c.size&&!S.c.has(i)?{hidden:true}:{})}));
+ ch2.data.datasets.forEach(d=>{const i=C.indexOf(d.label);d.backgroundColor=[0,1,2].map(j=>S.m<0||S.m==j?COL[i]:COL[i]+'44')});
+ ch2.update();
+ const key={d:r=>r.d,c:r=>C[r.c],t:r=>r.t,s:r=>r.s,p:r=>r.p,a:r=>r.a}[S.k];
+ const T=[...F].sort((x,y)=>(key(x)>key(y)?1:key(x)<key(y)?-1:0)*S.dir);
+ $('th').innerHTML=H.map(([k,n])=>`<th data-k="${k}" class="${k=='a'?'num':''}">${n}${S.k==k?(S.dir>0?' ▲':' ▼'):''}</th>`).join('');
+ $('cnt').textContent='('+T.length+')';
+ $('tb').innerHTML=T.map(r=>`<tr><td>${dm(r.d)}</td><td style="white-space:nowrap"><i class="dot" style="background:${COL[r.c]}"></i>${C[r.c]}</td><td>${r.t}${r.f?' <span class="bd">bez računa</span>':''}</td><td>${r.s}</td><td>${r.p}</td><td class="num">${fmt(r.a)}</td></tr>`).join('')||'<tr><td colspan="6">Nema stavki.</td></tr>';
+}
+document.addEventListener('click',e=>{
+ const m=e.target.closest('[data-m]'),c=e.target.closest('[data-c]'),k=e.target.closest('th[data-k]');
+ if(m){S.m=+m.dataset.m;render()}else if(c)tg(+c.dataset.c);
+ else if(k){S.dir=S.k==k.dataset.k?-S.dir:1;S.k=k.dataset.k;render()}
+});
+$('q').addEventListener('input',e=>{S.q=e.target.value;render()});
+$('rs').onclick=()=>{S.m=-1;S.c.clear();S.q='';$('q').value='';render()};
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',build);
+new MutationObserver(build).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+build();
+</script></body></html>
